@@ -1,6 +1,5 @@
 from requests import get
 
-
 class Author:
     def __init__(self, author_id: int, name: str, slug: str, api_books_url: str):
         self.author_id = author_id
@@ -10,7 +9,6 @@ class Author:
 
     def __str__(self):
         return f'{self.author_id}. {self.name}'
-
 
 class WolneLekturyAdapter:
     API_URL = 'https://wolnelektury.pl/api/'
@@ -26,6 +24,9 @@ class WolneLekturyAdapter:
                     slug=author.get('slug'),
                     api_books_url=author.get('href') + 'books'
                 ))
+        if not authors:
+            print('Nie znaleziono autora o podanej frazie.')
+            return None
         return authors
 
     def get_books(self, author_slug: str):
@@ -34,10 +35,13 @@ class WolneLekturyAdapter:
 class Application:
     def main(self):
         adapter = WolneLekturyAdapter()
-        authors = adapter.get_authors('Adam')
-        for author in authors:
-            print(author)
-
+        search_name = str(input('Podai imię lub nazwisko lub fragment imienia lub nazwiska autora: '))
+        authors = adapter.get_authors(search=search_name)
+        if authors is None:
+            return
+        else:
+            for author in authors:
+                print(author)
         search_author_id = int(input('Którego autora książki chcesz zobaczyć? '))
         found_author = next(filter(lambda auth: auth.author_id == search_author_id, authors))
 
