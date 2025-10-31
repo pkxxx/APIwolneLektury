@@ -43,6 +43,11 @@ class Application:
             for author in authors:
                 print(author)
         search_author_id = int(input('Którego autora książki chcesz zobaczyć? '))
+
+        if not any(author.author_id == search_author_id for author in authors):
+            print('Nie ma autora o podanym ID.')
+            return
+
         found_author = next(filter(lambda auth: auth.author_id == search_author_id, authors))
 
         for book in adapter.get_books(found_author.slug):
